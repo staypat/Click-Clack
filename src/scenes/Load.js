@@ -23,4 +23,10 @@ class Load extends Phaser.Scene{
         //this.load.audio('bgm', './assets/Crystal_Run.mp3'); // Audio by Patrick Hu (Me) from GarageBand
         
     }
+
+    create(){
+        console.log("On Load Scene");
+        cursors = this.input.keyboard.createCursorKeys();
+        this.scene.start('menuScene');
+    }
 }

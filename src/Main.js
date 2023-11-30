@@ -7,7 +7,7 @@ let config = {
     },
     width: 1280, //800, 640
     height: 720, // 600, 480
-    scene: [Load]
+    scene: [Load, Menu, Play]
 }
 let game = new Phaser.Game(config);
 // keyboard vars
