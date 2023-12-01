@@ -21,7 +21,7 @@ class Menu extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
     }
     update(){
-        if(cursors.up.isDown){
+        if(Phaser.Input.Keyboard.JustDown(cursors.up)){
             this.scene.start('playScene');
         }
     }

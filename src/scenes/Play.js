@@ -92,7 +92,7 @@ class Play extends Phaser.Scene {
         }
         if(this.dotsCount >= this.maxDots){
             console.log("Grid is full, game over!");
-            this.scene.restart('menuScene');
+            this.scene.start('menuScene');
         }
     }
 }
