@@ -5,13 +5,15 @@ let config = {
     render: {
         pixelArt: true
     },
-    width: 1280, //800, 640
-    height: 720, // 600, 480
+    width: 800,
+    height: 600,
     scene: [Load, Menu, Play]
 }
 let game = new Phaser.Game(config);
 // keyboard vars
 let keyA, keyD, cursors;
-// this.cursors = this.input.keyboard.createCursorKeys();
+// game vars
+let dotsCount = 0;
+let maxDots = 9;
 // high score tracker
 let highScoreVal = 0;

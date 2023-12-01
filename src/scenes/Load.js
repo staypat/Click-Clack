@@ -16,7 +16,10 @@ class Load extends Phaser.Scene{
         });
 
         // loading assets
-        //this.load.image('background', './assets/background.png');
+        this.load.image('dotRed', './assets/redDot.png');
+        this.load.image('dotGreen', './assets/greenDot.png');
+        this.load.image('dotYellow', './assets/yellowDot.png');
+
         
 
         // audio

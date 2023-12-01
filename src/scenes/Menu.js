@@ -8,7 +8,7 @@ class Menu extends Phaser.Scene {
         let menuConfig = {
             fontFamily: 'Courier New',
             fontSize: '28px',
-            color: '#FFFFFF',
+            color: '#FAF4C3',
             align: 'left',
             padding: {
                 top: 5,
@@ -16,6 +16,7 @@ class Menu extends Phaser.Scene {
             },
             fixedWidth: 0
         }
+        this.cameras.main.setBackgroundColor("#9FC2AA");
         this.add.text(game.config.width/2, game.config.height/2 - 64, 'Click Clack', menuConfig).setOrigin(0.5);
         cursors = this.input.keyboard.createCursorKeys();
     }
