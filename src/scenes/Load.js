@@ -19,6 +19,10 @@ class Load extends Phaser.Scene{
         this.load.image('dotRed', './assets/redDot.png');
         this.load.image('dotGreen', './assets/greenDot.png');
         this.load.image('dotYellow', './assets/yellowDot.png');
+        this.load.image('play', './assets/play.png');
+        this.load.image('instructions', './assets/instructions.png');
+        this.load.image('credits', './assets/credits.png');
+        this.load.image('highScores', './assets/highScores.png');
 
         
 
