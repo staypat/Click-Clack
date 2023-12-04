@@ -27,48 +27,48 @@ class Play extends Phaser.Scene {
                 this.dotsArray[i][j] = false; // set all cells to initially empty (false)
             }
         }
-        const cellSize = 100;
+        this.cellSize = 100;
 
         // starting positions to center the board
-        const startX = (this.game.config.width - 3 * cellSize) / 2;
-        const startY = (this.game.config.height - 3 * cellSize) / 2;
+        this.startX = (this.game.config.width - 3 * this.cellSize) / 2;
+        this.startY = (this.game.config.height - 3 * this.cellSize) / 2;
 
-        const graphics = this.add.graphics();
+        this.grid = this.add.graphics();
 
         // horizontal lines
         for(let i = 1; i < 3; i++){
-            const y = startY + i * cellSize;
-            graphics.lineStyle(6, 0xffffff);
-            graphics.strokeLineShape(new Phaser.Geom.Line(startX, y, startX + 3 * cellSize, y));
+            this.y = this.startY + i * this.cellSize;
+            this.grid.lineStyle(6, 0xffffff);
+            this.grid.strokeLineShape(new Phaser.Geom.Line(this.startX, this.y, this.startX + 3 * this.cellSize, this.y));
         }
 
         // vertical lines
         for(let j = 1; j < 3; j++){
-            const x = startX + j * cellSize;
-            graphics.lineStyle(6, 0xffffff);
-            graphics.strokeLineShape(new Phaser.Geom.Line(x, startY, x, startY + 3 * cellSize));
+            this.x = this.startX + j * this.cellSize;
+            this.grid.lineStyle(6, 0xffffff);
+            this.grid.strokeLineShape(new Phaser.Geom.Line(this.x, this.startY, this.x, this.startY + 3 * this.cellSize));
         }
 
 
         function spawnDot(){
             if(this.dotsCount < this.maxDots){
-                let emptyCells = [];
+                this.emptyCells = [];
                 for(let i = 0; i < this.gridColumns; i++){
                     for(let j = 0; j < this.gridRows; j++){
                         if(!(this.dotsArray[i][j])){
-                            emptyCells.push({ col: i, row: j });
+                            this.emptyCells.push({ col: i, row: j });
                         }
                     }
                 }
-                if(emptyCells.length > 0){
-                    const randomIndex = Phaser.Math.Between(0, emptyCells.length - 1);
-                    const { col, row } = emptyCells[randomIndex];
-                    const cellCenterX = startX + col * cellSize + cellSize / 2;
-                    const cellCenterY = startY + row * cellSize + cellSize / 2;
-                    const dotColors = ['dotRed', 'dotGreen', 'dotYellow'];
-                    const rndSelection = Math.floor(Math.random() * dotColors.length);
-                    const dot = this.add.sprite(cellCenterX, cellCenterY, dotColors[rndSelection]);
-                    this.dotsGroup.add(dot);
+                if(this.emptyCells.length > 0){
+                    this.randomIndex = Phaser.Math.Between(0, this.emptyCells.length - 1);
+                    const {col, row} = this.emptyCells[this.randomIndex];
+                    this.cellCenterX = this.startX + col * this.cellSize + this.cellSize / 2;
+                    this.cellCenterY = this.startY + row * this.cellSize + this.cellSize / 2;
+                    this.dotColors = ['dotRed', 'dotGreen', 'dotYellow'];
+                    this.rndSelection = Math.floor(Math.random() * this.dotColors.length);
+                    this.dot = this.add.sprite(this.cellCenterX, this.cellCenterY, this.dotColors[this.rndSelection]);
+                    this.dotsGroup.add(this.dot);
                     this.dotsArray[col][row] = true;
                     this.dotsCount++;
                     console.log("Current dotsCount value:", this.dotsCount);
