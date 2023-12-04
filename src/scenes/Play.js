@@ -27,6 +27,7 @@ class Play extends Phaser.Scene {
                 this.dotsArray[i][j] = false; // set all cells to initially empty (false)
             }
         }
+
         this.cellSize = 100;
 
         // starting positions to center the board
@@ -34,7 +35,6 @@ class Play extends Phaser.Scene {
         this.startY = (this.game.config.height - 3 * this.cellSize) / 2;
 
         this.grid = this.add.graphics();
-
         // horizontal lines
         for(let i = 1; i < 3; i++){
             this.y = this.startY + i * this.cellSize;
@@ -55,7 +55,7 @@ class Play extends Phaser.Scene {
                 this.emptyCells = [];
                 for(let i = 0; i < this.gridColumns; i++){
                     for(let j = 0; j < this.gridRows; j++){
-                        if(!(this.dotsArray[i][j])){
+                        if(!(this.dotsArray[i][j].filled)){
                             this.emptyCells.push({ col: i, row: j });
                         }
                     }
@@ -67,9 +67,12 @@ class Play extends Phaser.Scene {
                     this.cellCenterY = this.startY + row * this.cellSize + this.cellSize / 2;
                     this.dotColors = ['dotRed', 'dotGreen', 'dotYellow'];
                     this.rndSelection = Math.floor(Math.random() * this.dotColors.length);
-                    this.dot = this.add.sprite(this.cellCenterX, this.cellCenterY, this.dotColors[this.rndSelection]);
+                    this.dotsArray[col][row] = {
+                        filled: true,
+                        color: this.dotColors[this.rndSelection]
+                    };
+                    this.dot = this.physics.add.sprite(this.cellCenterX, this.cellCenterY,  this.dotsArray[col][row].color);
                     this.dotsGroup.add(this.dot);
-                    this.dotsArray[col][row] = true;
                     this.dotsCount++;
                     console.log("Current dotsCount value:", this.dotsCount);
                 }
@@ -82,14 +85,94 @@ class Play extends Phaser.Scene {
             callback: spawnDot,
             callbackScope: this,
             loop: true,
-            repeat: this.maxDots - 1
+        });
+
+        // player
+        this.player = this.physics.add.sprite(this.startX + this.cellSize, this.startY + this.cellSize, 'player').setOrigin(0, 0);
+        // player's current grid position (center is (0, 0))
+        let playerGridX = 0;
+        let playerGridY = 0;
+        function movePlayer(direction){
+            // new grid position
+            let newGridX = playerGridX;
+            let newGridY = playerGridY;
+            if(direction === 'LEFT' && playerGridX > -1){
+                newGridX--;
+            }else if(direction === 'RIGHT' && playerGridX < this.gridColumns - 2){
+                newGridX++;
+            }else if(direction === 'UP' && playerGridY > -1){
+                newGridY--;
+            }else if(direction === 'DOWN' && playerGridY < this.gridRows - 2){
+                newGridY++;
+            }
+            // update player position if valid new grid position
+            if(newGridX != playerGridX || newGridY != playerGridY){
+                playerGridX = newGridX;
+                playerGridY = newGridY;
+                const newX = this.startX + newGridX * this.cellSize + this.cellSize;
+                const newY = this.startY + newGridY * this.cellSize + this.cellSize;
+                this.tweens.add({
+                    targets: this.player,
+                    x: newX,
+                    y: newY,
+                    duration: 150,
+                    ease: 'Linear',
+                    repeat: 0,
+                });
+            }
+        }
+
+        //keyboard listener
+        this.input.keyboard.on('keydown', function (event){
+            switch(event.code){
+                case 'ArrowLeft':
+                    console.log('Left')
+                    movePlayer.call(this, 'LEFT');
+                    break;
+                case 'ArrowRight':
+                    console.log('Right')
+                    movePlayer.call(this, 'RIGHT');
+                    break;
+                case 'ArrowUp':
+                    console.log('Up')
+                    movePlayer.call(this, 'UP');
+                    break;
+                case 'ArrowDown':
+                    console.log('Down')
+                    movePlayer.call(this, 'DOWN');
+                    break;
+                default:
+                    break;
+            }
+        }, this);
+
+        // check dot and player intersection
+        function checkOverlap() {
+            this.dotsGroup.getChildren().forEach(dot => {
+                if(Phaser.Geom.Intersects.RectangleToRectangle(dot.getBounds(), this.player.getBounds())){
+                    console.log('Overlap detected with dot');
+                    if(Phaser.Input.Keyboard.JustDown(keyA)){
+                        this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
+                        this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
+                        if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotGreen'){
+                            dot.destroy();
+                            this.dotsArray[this.dotCol][this.dotRow].filled = false;
+                            this.dotsCount--;
+                        }
+                    }
+                }
+            });
+        }
+
+        this.time.addEvent({
+            loop: true,
+            callback: checkOverlap,
+            callbackScope: this,
+            delay: 100
         });
     }
 
     update(){
-        if(Phaser.Input.Keyboard.JustDown(cursors.up)){
-            console.log("Up Key Pressed");
-        }
         if(this.dotsCount >= this.maxDots){
             console.log("Grid is full, game over!");
             this.scene.start('menuScene');

@@ -5,6 +5,9 @@ let config = {
     render: {
         pixelArt: true
     },
+    physics: {
+        default: 'arcade',
+    },
     width: 800,
     height: 600,
     scene: [Load, Menu, Play, Instructions, Scores, Credits]

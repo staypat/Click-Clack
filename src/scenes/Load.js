@@ -23,6 +23,7 @@ class Load extends Phaser.Scene{
         this.load.image('instructions', './assets/instructions.png');
         this.load.image('credits', './assets/credits.png');
         this.load.image('highscores', './assets/highScores.png');
+        this.load.image('player', './assets/player.png');
 
         
 
