@@ -18,40 +18,49 @@ class Menu extends Phaser.Scene {
         }
         this.cameras.main.setBackgroundColor("#9FC2AA");
         this.selectedButtonIndex = 0;
+        this.highlightGraphics = this.add.graphics();
         this.playButton = this.add.image(400, 100, 'play').setInteractive();
-        this.instructionsButton = this.add.image(400, 200, 'instructions').setInteractive();
-        this.creditsButton = this.add.image(400, 300, 'credits').setInteractive();
-        this.highScoresButton = this.add.image(400, 400, 'highScores').setInteractive();
+        this.instructionsButton = this.add.image(400, 225, 'instructions').setInteractive();
+        this.creditsButton = this.add.image(400, 350, 'highscores').setInteractive();
+        this.highScoresButton = this.add.image(400, 475, 'credits').setInteractive();
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown', this.handleKeyboardInput, this);
+        this.scaleButton();
         this.add.text(game.config.width/2, game.config.height - 30, 'Click Clack', menuConfig).setOrigin(0.5);
     }
 
     handleKeyboardInput() {
         if(cursors.up.isDown){
             this.selectedButtonIndex = (this.selectedButtonIndex - 1 + 4) % 4; // wrap around
-        }else if(cursors.down.isDown) {
+        }else if(cursors.down.isDown){
             this.selectedButtonIndex = (this.selectedButtonIndex + 1) % 4; // wrap around
         }
-        // highlight the selected button
-        this.highlightSelectedButton();
+        this.scaleButton(); // highlight the selected button
+        if(cursors.right.isDown){
+            if(this.selectedButtonIndex == 0){
+                this.scene.start('playScene');
+            }else if(this.selectedButtonIndex == 1){
+                this.scene.start('instructionScene');
+            }else if(this.selectedButtonIndex == 2){
+                this.scene.start('scoreScene');
+            }else{
+                this.scene.start('creditScene');
+            }
+        }
     }
     
-    // function to highlight the selected button
-    highlightSelectedButton(){
+    // function to scale the selected button
+    scaleButton(){
+        let scaleMult = 1.25;
         [this.playButton, this.instructionsButton, this.creditsButton, this.highScoresButton].forEach((button, index) => {
             if(index === this.selectedButtonIndex){
-                button.setTint(0xff0000);
+                button.setScale(scaleMult);
             }else{
-                button.clearTint();
+                button.setScale(1); // reset size for other buttons
             }
         });
     }
     
     update(){
-        this.highlightSelectedButton();
-        if(Phaser.Input.Keyboard.JustDown(cursors.right)){
-            this.scene.start('playScene');
-        }
     }
 }

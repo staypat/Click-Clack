@@ -22,7 +22,7 @@ class Load extends Phaser.Scene{
         this.load.image('play', './assets/play.png');
         this.load.image('instructions', './assets/instructions.png');
         this.load.image('credits', './assets/credits.png');
-        this.load.image('highScores', './assets/highScores.png');
+        this.load.image('highscores', './assets/highScores.png');
 
         
 
@@ -33,7 +33,6 @@ class Load extends Phaser.Scene{
 
     create(){
         console.log("On Load Scene");
-        cursors = this.input.keyboard.createCursorKeys();
         this.scene.start('menuScene');
     }
 }

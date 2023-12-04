@@ -23,7 +23,7 @@ class Play extends Phaser.Scene {
         this.dotsArray = [];
         for(let i = 0; i < this.gridColumns; i++){
             this.dotsArray[i] = [];
-            for (let j = 0; j < this.gridRows; j++) {
+            for(let j = 0; j < this.gridRows; j++){
                 this.dotsArray[i][j] = false; // set all cells to initially empty (false)
             }
         }
