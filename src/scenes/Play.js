@@ -115,14 +115,13 @@ class Play extends Phaser.Scene {
                     targets: this.player,
                     x: newX,
                     y: newY,
-                    duration: 150,
+                    duration: 75,
                     ease: 'Linear',
-                    repeat: 0,
                 });
             }
         }
 
-        //keyboard listener
+        // keyboard listener
         this.input.keyboard.on('keydown', function (event){
             switch(event.code){
                 case 'ArrowLeft':
@@ -151,10 +150,28 @@ class Play extends Phaser.Scene {
             this.dotsGroup.getChildren().forEach(dot => {
                 if(Phaser.Geom.Intersects.RectangleToRectangle(dot.getBounds(), this.player.getBounds())){
                     console.log('Overlap detected with dot');
-                    if(Phaser.Input.Keyboard.JustDown(keyA)){
+                    if(keyA.isDown && !(keyD.isDown)){
                         this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
                         this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
                         if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotGreen'){
+                            dot.destroy();
+                            this.dotsArray[this.dotCol][this.dotRow].filled = false;
+                            this.dotsCount--;
+                        }
+                    }
+                    if(keyD.isDown && !(keyA.isDown)){
+                        this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
+                        this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
+                        if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotRed'){
+                            dot.destroy();
+                            this.dotsArray[this.dotCol][this.dotRow].filled = false;
+                            this.dotsCount--;
+                        }
+                    }
+                    if(keyD.isDown && keyA.isDown){
+                        this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
+                        this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
+                        if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotYellow'){
                             dot.destroy();
                             this.dotsArray[this.dotCol][this.dotRow].filled = false;
                             this.dotsCount--;

@@ -8,7 +8,7 @@ class Menu extends Phaser.Scene {
         let menuConfig = {
             fontFamily: 'Courier New',
             fontSize: '28px',
-            color: '#FAF4C3',
+            color: '#000000',
             align: 'left',
             padding: {
                 top: 5,
@@ -19,14 +19,14 @@ class Menu extends Phaser.Scene {
         this.cameras.main.setBackgroundColor("#9FC2AA");
         this.selectedButtonIndex = 0;
         this.highlightGraphics = this.add.graphics();
-        this.playButton = this.add.image(400, 100, 'play').setInteractive();
-        this.instructionsButton = this.add.image(400, 225, 'instructions').setInteractive();
-        this.creditsButton = this.add.image(400, 350, 'highscores').setInteractive();
-        this.highScoresButton = this.add.image(400, 475, 'credits').setInteractive();
+        this.add.text(game.config.width/2, 50, 'Click Clack', menuConfig).setOrigin(0.5);
+        this.playButton = this.add.image(game.config.width/2, 150, 'play').setInteractive();
+        this.instructionsButton = this.add.image(game.config.width/2, 275, 'instructions').setInteractive();
+        this.creditsButton = this.add.image(game.config.width/2, 400, 'highscores').setInteractive();
+        this.highScoresButton = this.add.image(game.config.width/2, 525, 'credits').setInteractive();
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown', this.handleKeyboardInput, this);
         this.scaleButton();
-        this.add.text(game.config.width/2, game.config.height - 30, 'Click Clack', menuConfig).setOrigin(0.5);
     }
 
     handleKeyboardInput() {
