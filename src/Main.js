@@ -1,6 +1,7 @@
 "use strict"
 
 let config = {
+    parent: 'gameView',
     type: Phaser.AUTO,
     render: {
         pixelArt: true
@@ -10,6 +11,9 @@ let config = {
     },
     width: 800,
     height: 600,
+    scale: {
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+    },
     scene: [Load, Menu, Play, Instructions, Scores, Credits]
 }
 let game = new Phaser.Game(config);
