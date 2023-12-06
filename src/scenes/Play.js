@@ -5,9 +5,17 @@ class Play extends Phaser.Scene {
     create(){
         console.log("On Play Scene");
         // bgm
+        this.bgm = this.sound.add('bgm', { 
+            mute: false,
+            volume: 0.3,
+            rate: 1,
+            loop: true 
+        });
+        this.bgm.play();
 
         // add background
         this.cameras.main.setBackgroundColor("#9FC2AA");
+        this.add.rectangle(0, 0, game.config.width, game.config.height / 5, 0xC87F96).setOrigin(0, 0);
 
         // key bindings
         cursors = this.input.keyboard.createCursorKeys();
@@ -50,45 +58,17 @@ class Play extends Phaser.Scene {
         }
 
 
-        function spawnDot(){
-            if(this.dotsCount < this.maxDots){
-                this.emptyCells = [];
-                for(let i = 0; i < this.gridColumns; i++){
-                    for(let j = 0; j < this.gridRows; j++){
-                        if(!(this.dotsArray[i][j].filled)){
-                            this.emptyCells.push({ col: i, row: j });
-                        }
-                    }
-                }
-                if(this.emptyCells.length > 0){
-                    this.randomIndex = Phaser.Math.Between(0, this.emptyCells.length - 1);
-                    const {col, row} = this.emptyCells[this.randomIndex];
-                    this.cellCenterX = this.startX + col * this.cellSize + this.cellSize / 2;
-                    this.cellCenterY = this.startY + row * this.cellSize + this.cellSize / 2;
-                    this.dotColors = ['dotRed', 'dotGreen', 'dotYellow'];
-                    this.rndSelection = Math.floor(Math.random() * this.dotColors.length);
-                    this.dotsArray[col][row] = {
-                        filled: true,
-                        color: this.dotColors[this.rndSelection]
-                    };
-                    this.dot = this.physics.add.sprite(this.cellCenterX, this.cellCenterY,  this.dotsArray[col][row].color);
-                    this.dotsGroup.add(this.dot);
-                    this.dotsCount++;
-                    console.log("Current dotsCount value:", this.dotsCount);
-                }
-            }
-        }
-
         // call spawnDot continuously to create random dot sprites until the grid is full
         this.time.addEvent({
-            delay: 1000,
-            callback: spawnDot,
+            delay: 980,
+            callback: this.spawnDot,
             callbackScope: this,
             loop: true,
         });
 
         // player
         this.player = this.physics.add.sprite(this.startX + this.cellSize, this.startY + this.cellSize, 'player').setOrigin(0, 0);
+        this.player.gameOver = false;
         // player's current grid position (center is (0, 0))
         let playerGridX = 0;
         let playerGridY = 0;
@@ -146,53 +126,105 @@ class Play extends Phaser.Scene {
         }, this);
 
         // check dot and player intersection
-        function checkOverlap() {
-            this.dotsGroup.getChildren().forEach(dot => {
-                if(Phaser.Geom.Intersects.RectangleToRectangle(dot.getBounds(), this.player.getBounds())){
-                    console.log('Overlap detected with dot');
-                    if(keyA.isDown && !(keyD.isDown)){
-                        this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
-                        this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
-                        if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotGreen'){
-                            dot.destroy();
-                            this.dotsArray[this.dotCol][this.dotRow].filled = false;
-                            this.dotsCount--;
-                        }
-                    }
-                    if(keyD.isDown && !(keyA.isDown)){
-                        this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
-                        this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
-                        if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotRed'){
-                            dot.destroy();
-                            this.dotsArray[this.dotCol][this.dotRow].filled = false;
-                            this.dotsCount--;
-                        }
-                    }
-                    if(keyD.isDown && keyA.isDown){
-                        this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
-                        this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
-                        if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotYellow'){
-                            dot.destroy();
-                            this.dotsArray[this.dotCol][this.dotRow].filled = false;
-                            this.dotsCount--;
-                        }
-                    }
-                }
-            });
-        }
-
         this.time.addEvent({
             loop: true,
-            callback: checkOverlap,
+            callback: this.checkOverlap,
             callbackScope: this,
             delay: 100
+        });
+
+        this.timeLeft = 60;
+        this.timeText = this.add.text(game.config.width/2, game.config.height/8, 'Time: ' + this.timeLeft).setOrigin(0.5).setScale(2);
+        this.countdownTimer = this.time.addEvent({
+            delay: 1000,
+            callback: this.updateLevel,
+            callbackScope: this,
+            loop: true
         });
     }
 
     update(){
-        if(this.dotsCount >= this.maxDots){
+        if(this.dotsCount >= this.maxDots || this.timeLeft == 0){
+            this.player.gameOver = true;
+            this.bgm.stop();
             console.log("Grid is full, game over!");
             this.scene.start('menuScene');
         }
     }
+
+    spawnDot(){
+        if(this.dotsCount < this.maxDots){
+            this.emptyCells = [];
+            for(let i = 0; i < this.gridColumns; i++){
+                for(let j = 0; j < this.gridRows; j++){
+                    if(!(this.dotsArray[i][j].filled)){
+                        this.emptyCells.push({ col: i, row: j });
+                    }
+                }
+            }
+            if(this.emptyCells.length > 0){
+                this.randomIndex = Phaser.Math.Between(0, this.emptyCells.length - 1);
+                const {col, row} = this.emptyCells[this.randomIndex];
+                this.cellCenterX = this.startX + col * this.cellSize + this.cellSize / 2;
+                this.cellCenterY = this.startY + row * this.cellSize + this.cellSize / 2;
+                this.dotColors = ['dotRed', 'dotGreen', 'dotYellow'];
+                this.rndSelection = Math.floor(Math.random() * this.dotColors.length);
+                this.dotsArray[col][row] = {
+                    filled: true,
+                    color: this.dotColors[this.rndSelection]
+                };
+                this.dot = new Dot(this, this.cellCenterX, this.cellCenterY,  this.dotsArray[col][row].color);
+                this.dotsGroup.add(this.dot);
+                this.dotsCount++;
+                console.log("Current dotsCount value:", this.dotsCount);
+            }
+        }
+    }
+
+    checkOverlap() {
+        this.dotsGroup.getChildren().forEach(dot => {
+            if(Phaser.Geom.Intersects.RectangleToRectangle(dot.getBounds(), this.player.getBounds())){
+                console.log('Overlap detected with dot');
+                if(keyA.isDown && !(keyD.isDown)){
+                    this.sound.play('click', {volume: 0.5});
+                    this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
+                    this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
+                    if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotGreen'){
+                        dot.destroy();
+                        this.dotsArray[this.dotCol][this.dotRow].filled = false;
+                        this.dotsCount--;
+                    }
+                }
+                if(keyD.isDown && !(keyA.isDown)){
+                    this.sound.play('clack', {volume: 0.5});
+                    this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
+                    this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
+                    if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotRed'){
+                        dot.destroy();
+                        this.dotsArray[this.dotCol][this.dotRow].filled = false;
+                        this.dotsCount--;
+                    }
+                }
+                if(keyD.isDown && keyA.isDown){
+                    this.sound.play('click', {volume: 0.5});
+                    this.sound.play('clack', {volume: 0.5});
+                    this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
+                    this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
+                    if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotYellow'){
+                        dot.destroy();
+                        this.dotsArray[this.dotCol][this.dotRow].filled = false;
+                        this.dotsCount--;
+                    }
+                }
+            }
+        });
+    }
+
+    updateLevel(){
+        if(!this.player.gameOver){
+            this.timeLeft -= 1;
+            this.timeText.setText('Time: ' + this.timeLeft);
+        }
+    }
+
 }

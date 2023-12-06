@@ -28,7 +28,12 @@ class Load extends Phaser.Scene{
         
 
         // audio
-        //this.load.audio('bgm', './assets/Crystal_Run.mp3'); // Audio by Patrick Hu (Me) from GarageBand
+        this.load.audio('bgm', './assets/bgm.mp3'); // Sound Effect from Pixabay
+        this.load.audio('menu', './assets/menu.mp3'); // Sound Effect from Pixabay
+        this.load.audio('click', './assets/click.mp3'); // Sound Effect by soundsgreat from Pixabay
+        this.load.audio('clack', './assets/clack.mp3'); // Sound Effect from Pixabay
+        this.load.audio('start', './assets/start.mp3'); // Sound Effect from Pixabay
+        
         
     }
 
