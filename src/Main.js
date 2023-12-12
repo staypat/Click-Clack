@@ -4,7 +4,8 @@ let config = {
     parent: 'gameView',
     type: Phaser.AUTO,
     render: {
-        pixelArt: true
+        pixelArt: true,
+        antialias: true
     },
     physics: {
         default: 'arcade',
@@ -14,7 +15,7 @@ let config = {
     scale: {
         autoCenter: Phaser.Scale.CENTER_BOTH,
     },
-    scene: [Load, Menu, Play, Instructions, Scores, Credits]
+    scene: [Load, Title, Menu, Play, Instructions, Scores, Credits]
 }
 let game = new Phaser.Game(config);
 // keyboard vars
@@ -22,5 +23,5 @@ let keyA, keyD, cursors;
 // game vars
 let dotsCount = 0;
 let maxDots = 9;
-// high score tracker
-let highScoreVal = 0;
+// combo tracker
+let combo = 0;

@@ -16,6 +16,7 @@ class Load extends Phaser.Scene{
         });
 
         // loading assets
+        this.load.image('menuTitle', './assets/title.png');
         this.load.image('dotRed', './assets/redDot.png');
         this.load.image('dotGreen', './assets/greenDot.png');
         this.load.image('dotYellow', './assets/yellowDot.png');
@@ -24,6 +25,8 @@ class Load extends Phaser.Scene{
         this.load.image('credits', './assets/credits.png');
         this.load.image('highscores', './assets/highScores.png');
         this.load.image('player', './assets/player.png');
+        this.load.image('button', './assets/button.png');
+        this.load.bitmapFont('klein', './assets/fonts/KleinText/KleinText.png', './assets/fonts/KleinText/KleinText.xml'); // (Font: Klein Family by Zetafonts -http://www.zetafonts.com/collection/2922)
 
         
 
@@ -39,6 +42,6 @@ class Load extends Phaser.Scene{
 
     create(){
         console.log("On Load Scene");
-        this.scene.start('menuScene');
+        this.scene.start('titleScene');
     }
 }

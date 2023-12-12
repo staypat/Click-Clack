@@ -5,7 +5,6 @@ class Menu extends Phaser.Scene {
     
     create(){
         console.log("On Menu Scene");
-        this.backText = this.add.text(0, game.config.height - 20, 'Press Right Arrow to select button').setColor('black');
         this.menuBgm = this.sound.add('menu', { 
             mute: false,
             volume: 0.25,
@@ -13,21 +12,9 @@ class Menu extends Phaser.Scene {
             loop: true 
         });
         this.menuBgm.play();
-        let menuConfig = {
-            fontFamily: 'Courier New',
-            fontSize: '28px',
-            color: '#000000',
-            align: 'left',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 0
-        }
         this.cameras.main.setBackgroundColor("#9FC2AA");
         this.selectedButtonIndex = 0;
         this.highlightGraphics = this.add.graphics();
-        this.add.text(game.config.width/2, 50, 'Click Clack', menuConfig).setOrigin(0.5);
         this.playButton = this.add.image(game.config.width/2, 150, 'play').setInteractive();
         this.instructionsButton = this.add.image(game.config.width/2, 275, 'instructions').setInteractive();
         this.creditsButton = this.add.image(game.config.width/2, 400, 'highscores').setInteractive();
@@ -45,7 +32,7 @@ class Menu extends Phaser.Scene {
             this.sound.play('click', {volume: 1});
             this.selectedButtonIndex = (this.selectedButtonIndex + 1) % 4; // wrap around
         }
-        this.scaleButton(); // highlight the selected button
+        this.scaleButton(); // scale the selected button
         if(cursors.right.isDown){
             if(this.selectedButtonIndex == 0){
                 this.sound.play('start', {volume: 0.5});
