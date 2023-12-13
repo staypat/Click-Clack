@@ -67,7 +67,7 @@ class Play extends Phaser.Scene {
         });
 
         // player
-        this.player = this.physics.add.sprite(this.startX + this.cellSize, this.startY + this.cellSize, 'player').setOrigin(0, 0);
+        this.player = this.add.sprite(this.startX + this.cellSize, this.startY + this.cellSize, 'player').setOrigin(0, 0);
         this.player.gameOver = false;
         // player's current grid position (center is (0, 0))
         let playerGridX = 0;

@@ -4,7 +4,5 @@ class Dot extends Phaser.Physics.Arcade.Sprite{
         scene.add.existing(this);
         this.parentScene = scene;
         this.parentScene.add.existing(this);
-        this.parentScene.physics.add.existing(this);
-        this.setImmovable();
     }
 }

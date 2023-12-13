@@ -37,9 +37,9 @@ class Menu extends Phaser.Scene {
         this.playButton = this.add.image(game.config.width - 175, 150, 'blankbutton');
         this.instructionsButton = this.add.image(game.config.width - 175, 275, 'blankbutton');
         this.creditsButton = this.add.image(game.config.width - 175, 400, 'blankbutton');
-        this.add.bitmapText(150, game.config.height/2 + 30, 'klein', 'Play').setScale(0.4);
-        this.add.bitmapText(150, game.config.height/2 + 30, 'klein', 'How To').setScale(0.4);
-        this.add.bitmapText(150, game.config.height/2 + 30, 'klein', 'Credits').setScale(0.4);
+        this.add.bitmapText(game.config.width - 200, 135, 'klein', 'PLAY').setScale(0.4);
+        this.add.bitmapText(game.config.width - 235, 260, 'klein', 'HOW TO').setScale(0.4);
+        this.add.bitmapText(game.config.width - 230, 385, 'klein', 'CREDITS').setScale(0.4);
 
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown', this.handleKeyboardInput, this);

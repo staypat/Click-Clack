@@ -1,14 +1,12 @@
+// Phaser major components used: particle effects, text objects, animation manager, tween manager, and timers
+
 "use strict"
 
 let config = {
     parent: 'gameView',
     type: Phaser.AUTO,
     render: {
-        pixelArt: true,
-        antialias: true
-    },
-    physics: {
-        default: 'arcade',
+        pixelArt: true
     },
     width: 800,
     height: 600,
