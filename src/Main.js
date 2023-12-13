@@ -15,7 +15,7 @@ let config = {
     scale: {
         autoCenter: Phaser.Scale.CENTER_BOTH,
     },
-    scene: [Load, Menu, Play, Instructions, Scores, Credits]
+    scene: [Load, Menu, Play, Instructions, Credits]
 }
 let game = new Phaser.Game(config);
 // keyboard vars
