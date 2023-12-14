@@ -3,7 +3,6 @@ class Play extends Phaser.Scene {
         super("playScene");
     }
     create(){
-        console.log("On Play Scene");
         // bgm
         this.bgm = this.sound.add('bgm', { 
             mute: false,
@@ -21,6 +20,7 @@ class Play extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
 
         // dots and grid set up
         this.dotsGroup = this.add.group();
@@ -73,31 +73,33 @@ class Play extends Phaser.Scene {
         let playerGridX = 0;
         let playerGridY = 0;
         function movePlayer(direction){
-            // new grid position
-            let newGridX = playerGridX;
-            let newGridY = playerGridY;
-            if(direction === 'LEFT' && playerGridX > -1){
-                newGridX--;
-            }else if(direction === 'RIGHT' && playerGridX < this.gridColumns - 2){
-                newGridX++;
-            }else if(direction === 'UP' && playerGridY > -1){
-                newGridY--;
-            }else if(direction === 'DOWN' && playerGridY < this.gridRows - 2){
-                newGridY++;
-            }
-            // update player position if valid new grid position
-            if(newGridX != playerGridX || newGridY != playerGridY){
-                playerGridX = newGridX;
-                playerGridY = newGridY;
-                const newX = this.startX + newGridX * this.cellSize + this.cellSize;
-                const newY = this.startY + newGridY * this.cellSize + this.cellSize;
-                this.tweens.add({
-                    targets: this.player,
-                    x: newX,
-                    y: newY,
-                    duration: 75,
-                    ease: 'Linear',
-                });
+            if(!this.player.gameOver){
+                // new grid position
+                let newGridX = playerGridX;
+                let newGridY = playerGridY;
+                if(direction === 'LEFT' && playerGridX > -1){
+                    newGridX--;
+                }else if(direction === 'RIGHT' && playerGridX < this.gridColumns - 2){
+                    newGridX++;
+                }else if(direction === 'UP' && playerGridY > -1){
+                    newGridY--;
+                }else if(direction === 'DOWN' && playerGridY < this.gridRows - 2){
+                    newGridY++;
+                }
+                // update player position if valid new grid position
+                if(newGridX != playerGridX || newGridY != playerGridY){
+                    playerGridX = newGridX;
+                    playerGridY = newGridY;
+                    const newX = this.startX + newGridX * this.cellSize + this.cellSize;
+                    const newY = this.startY + newGridY * this.cellSize + this.cellSize;
+                    this.tweens.add({
+                        targets: this.player,
+                        x: newX,
+                        y: newY,
+                        duration: 75,
+                        ease: 'Linear',
+                    });
+                }
             }
         }
 
@@ -105,19 +107,15 @@ class Play extends Phaser.Scene {
         this.input.keyboard.on('keydown', function (event){
             switch(event.code){
                 case 'ArrowLeft':
-                    console.log('Left')
                     movePlayer.call(this, 'LEFT');
                     break;
                 case 'ArrowRight':
-                    console.log('Right')
                     movePlayer.call(this, 'RIGHT');
                     break;
                 case 'ArrowUp':
-                    console.log('Up')
                     movePlayer.call(this, 'UP');
                     break;
                 case 'ArrowDown':
-                    console.log('Down')
                     movePlayer.call(this, 'DOWN');
                     break;
                 default:
@@ -134,7 +132,17 @@ class Play extends Phaser.Scene {
         });
 
         this.timeLeft = 60;
-        this.timeText = this.add.text(game.config.width/2, game.config.height/8, 'Time: ' + this.timeLeft).setOrigin(0.5).setScale(2);
+        this.currScore = 0;
+        this.combo = 0;
+        this.add.image(game.config.width/2 - 260, game.config.height/10 + 20, 'blankbutton').setScale(6, 1);
+        this.add.image(game.config.width/2, game.config.height/10 + 20, 'blankbutton').setScale(4, 1);
+        this.add.image(game.config.width/2 + 260, game.config.height/10 + 20, 'blankbutton').setScale(6, 1);
+        this.add.bitmapText(game.config.width/2 - 380, game.config.height/10, 'klein', 'Score:').setScale(0.5);
+        this.add.bitmapText(game.config.width/2 - 70, game.config.height/10, 'klein', 'Time:').setScale(0.5);
+        this.add.bitmapText(game.config.width/2 + 140, game.config.height/10, 'klein', 'Combo:').setScale(0.5);
+        this.timeText = this.add.text(game.config.width/2 + 30, game.config.height/9, this.timeLeft).setColor('black').setScale(2);
+        this.scoreText = this.add.text(game.config.width/2 - 265, game.config.height/9, this.currScore).setColor('black').setScale(2).setAlign('left');
+        this.comboText = this.add.text(game.config.width/2 + 285, game.config.height/9, this.combo).setColor('black').setScale(2).setAlign('left');
         this.countdownTimer = this.time.addEvent({
             delay: 1000,
             callback: this.updateLevel,
@@ -144,16 +152,37 @@ class Play extends Phaser.Scene {
     }
 
     update(){
-        if(this.dotsCount >= this.maxDots || this.timeLeft == 0){
+        if((this.dotsCount >= this.maxDots || this.timeLeft == 0) && !this.player.gameOver){
             this.player.gameOver = true;
+            this.dotEmitter = this.add.particles(game.config.width/2, game.config.height/2, 'dotYellow', {
+                angle: { min: 180, max: 360 },
+                speed: { min: 10, max: 500, steps: 5000 },
+                gravityY: 350,
+                lifespan: 2000,
+                quantity: 10,
+                scale: { start: 0.1, end: 2 },
+                tint: [0xff0000, 0x00ff00, 0xffff00],
+            });
+            this.time.delayedCall(2000, () => {
+                this.dotEmitter.stop();
+                this.add.image(game.config.width/2, game.config.height/2, 'blankbutton').setScale(5);
+                this.add.bitmapText(game.config.width/3, game.config.height/3, 'klein', "Game Over").setScale(0.5);
+                this.add.bitmapText(game.config.width/3, game.config.height/3 + 50, 'klein', 'Best Score: ');
+                this.highScoreText = this.add.text(game.config.width/3 + 100, game.config.height/3 + 50, highScoreVal);
+            }, [], this);
+        }
+        if(this.player.gameOver && Phaser.Input.Keyboard.JustDown(keyR)){
             this.bgm.stop();
-            console.log("Grid is full, game over!");
+            this.scene.restart();
+        }
+        if(this.player.gameOver && Phaser.Input.Keyboard.JustDown(cursors.left)){
+            this.bgm.stop();
             this.scene.start('menuScene');
         }
     }
 
     spawnDot(){
-        if(this.dotsCount < this.maxDots){
+        if(this.dotsCount < this.maxDots && !this.player.gameOver){
             this.emptyCells = [];
             for(let i = 0; i < this.gridColumns; i++){
                 for(let j = 0; j < this.gridRows; j++){
@@ -176,44 +205,68 @@ class Play extends Phaser.Scene {
                 this.dot = new Dot(this, this.cellCenterX, this.cellCenterY,  this.dotsArray[col][row].color);
                 this.dotsGroup.add(this.dot);
                 this.dotsCount++;
-                console.log("Current dotsCount value:", this.dotsCount);
             }
         }
     }
 
     checkOverlap() {
         this.dotsGroup.getChildren().forEach(dot => {
-            if(Phaser.Geom.Intersects.RectangleToRectangle(dot.getBounds(), this.player.getBounds())){
-                console.log('Overlap detected with dot');
-                if(keyA.isDown && !(keyD.isDown)){
-                    this.sound.play('click', {volume: 0.5});
-                    this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
-                    this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
-                    if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotGreen'){
-                        dot.destroy();
-                        this.dotsArray[this.dotCol][this.dotRow].filled = false;
-                        this.dotsCount--;
+            if(!this.player.gameOver){
+                if(Phaser.Geom.Intersects.RectangleToRectangle(dot.getBounds(), this.player.getBounds())){
+                    if(keyA.isDown && !(keyD.isDown)){
+                        this.sound.play('click', {volume: 0.5});
+                        this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
+                        this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
+                        if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotGreen'){
+                            dot.destroy();
+                            this.combo++;
+                            this.comboText.setText(this.combo);
+                            this.currScore += this.combo * 5;
+                            this.scoreText.setText(this.currScore);
+                            this.dotsArray[this.dotCol][this.dotRow].filled = false;
+                            this.dotsCount--;
+                        }else{
+                            this.cameras.main.shake(50, 0.01);
+                            this.combo = 0;
+                            this.comboText.setText(this.combo);
+                        }
                     }
-                }
-                if(keyD.isDown && !(keyA.isDown)){
-                    this.sound.play('clack', {volume: 0.5});
-                    this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
-                    this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
-                    if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotRed'){
-                        dot.destroy();
-                        this.dotsArray[this.dotCol][this.dotRow].filled = false;
-                        this.dotsCount--;
+                    if(keyD.isDown && !(keyA.isDown)){
+                        this.sound.play('clack', {volume: 0.5});
+                        this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
+                        this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
+                        if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotRed'){
+                            dot.destroy();
+                            this.combo++;
+                            this.comboText.setText(this.combo);
+                            this.currScore += this.combo * 5;
+                            this.scoreText.setText(this.currScore);
+                            this.dotsArray[this.dotCol][this.dotRow].filled = false;
+                            this.dotsCount--;
+                        }else{
+                            this.cameras.main.shake(50, 0.01);
+                            this.combo = 0;
+                            this.comboText.setText(this.combo);
+                        }
                     }
-                }
-                if(keyD.isDown && keyA.isDown){
-                    this.sound.play('click', {volume: 0.5});
-                    this.sound.play('clack', {volume: 0.5});
-                    this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
-                    this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
-                    if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotYellow'){
-                        dot.destroy();
-                        this.dotsArray[this.dotCol][this.dotRow].filled = false;
-                        this.dotsCount--;
+                    if(keyD.isDown && keyA.isDown){
+                        this.sound.play('click', {volume: 0.5});
+                        this.sound.play('clack', {volume: 0.5});
+                        this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
+                        this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
+                        if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotYellow'){
+                            dot.destroy();
+                            this.combo++;
+                            this.comboText.setText(this.combo);
+                            this.currScore += this.combo * 10;
+                            this.scoreText.setText(this.currScore);
+                            this.dotsArray[this.dotCol][this.dotRow].filled = false;
+                            this.dotsCount--;
+                        }else{
+                            this.cameras.main.shake(50, 0.01);
+                            this.combo = 0;
+                            this.comboText.setText(this.combo);
+                        }
                     }
                 }
             }
@@ -223,8 +276,16 @@ class Play extends Phaser.Scene {
     updateLevel(){
         if(!this.player.gameOver){
             this.timeLeft -= 1;
-            this.timeText.setText('Time: ' + this.timeLeft);
+            this.timeText.setText(this.timeLeft);
+            if(highScoreVal <= this.currScore){
+                highScoreVal = this.currScore;
+            }
+            // if((this.elapsedTime % 5) == 0){
+            //     if(this.crystalSpeed >= this.crystalSpeedMax){
+            //         this.crystalSpeed -= 25;
+            //         this.spikeSpeed -= 5;
+            //     }
+            // }
         }
     }
-
 }

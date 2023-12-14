@@ -1,4 +1,5 @@
 // Phaser major components used: particle effects, text objects, animation manager, tween manager, and timers
+// Add animation for dot clear, fix instructions/credits scene, add tween for number in score
 
 "use strict"
 
@@ -17,9 +18,9 @@ let config = {
 }
 let game = new Phaser.Game(config);
 // keyboard vars
-let keyA, keyD, cursors;
+let keyA, keyD, keyR, cursors;
 // game vars
 let dotsCount = 0;
 let maxDots = 9;
-// combo tracker
-let combo = 0;
+// high score tracker
+let highScoreVal = 0;

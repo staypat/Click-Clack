@@ -4,7 +4,6 @@ class Menu extends Phaser.Scene {
     }
     
     create(){
-        console.log("On Menu Scene");
         this.add.image(230, 150, 'menuTitle').setScale(2.25);
         let title = 'CLICK CLACK';
         let x = -380;
@@ -40,7 +39,6 @@ class Menu extends Phaser.Scene {
         this.add.bitmapText(game.config.width - 200, 135, 'klein', 'PLAY').setScale(0.4);
         this.add.bitmapText(game.config.width - 235, 260, 'klein', 'HOW TO').setScale(0.4);
         this.add.bitmapText(game.config.width - 230, 385, 'klein', 'CREDITS').setScale(0.4);
-
         cursors = this.input.keyboard.createCursorKeys();
         this.input.keyboard.on('keydown', this.handleKeyboardInput, this);
         this.scaleButton();
