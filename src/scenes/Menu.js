@@ -44,9 +44,6 @@ class Menu extends Phaser.Scene {
         this.scaleButton();
     }
     
-    update(){
-    }
-
     handleKeyboardInput() {
         if(cursors.up.isDown){
             this.sound.play('click', {volume: 1});

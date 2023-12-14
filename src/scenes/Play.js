@@ -3,12 +3,6 @@ class Play extends Phaser.Scene {
         super("playScene");
     }
     create(){
-        //anims
-        this.anims.create({
-            key: 'pop',
-            frames: this.anims.generateFrameNumbers('pop', { start: 0, end: 7, first: 0}),
-            frameRate: 30
-        });
         // bgm
         this.bgm = this.sound.add('bgm', { 
             mute: false,
@@ -137,6 +131,7 @@ class Play extends Phaser.Scene {
             delay: 100
         });
 
+        // time, score, combo tracker
         this.timeLeft = 60;
         this.currScore = 0;
         this.combo = 0;
@@ -158,6 +153,7 @@ class Play extends Phaser.Scene {
     }
 
     update(){
+        // game over effects
         if((this.dotsCount >= this.maxDots || this.timeLeft == 0) && !this.player.gameOver){
             this.player.gameOver = true;
             this.dotEmitter = this.add.particles(game.config.width/2, game.config.height/2, 'dotYellow', {
@@ -187,6 +183,7 @@ class Play extends Phaser.Scene {
         }
     }
 
+    // spawn dot function (used in timer callback)
     spawnDot(){
         if(this.dotsCount < this.maxDots && !this.player.gameOver){
             this.emptyCells = [];
@@ -215,6 +212,7 @@ class Play extends Phaser.Scene {
         }
     }
 
+    // dot and player overlap check along with input check
     checkOverlap() {
         this.dotsGroup.getChildren().forEach(dot => {
             if(!this.player.gameOver){
@@ -224,8 +222,8 @@ class Play extends Phaser.Scene {
                         this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
                         this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
                         if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotGreen'){
-                            let pop = this.add.sprite(dot.x - 15, dot.y - 15, 'pop').setOrigin(0, 0);
-                            pop.anims.play('pop');
+                            let pop = this.add.sprite(dot.x - 15, dot.y - 15, 'green').setOrigin(0, 0);
+                            pop.anims.play('green');
                             pop.on('animationcomplete', () => {
                                 pop.destroy();
                             }); 
@@ -247,8 +245,8 @@ class Play extends Phaser.Scene {
                         this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
                         this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
                         if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotRed'){
-                            let pop = this.add.sprite(dot.x - 15, dot.y - 15, 'pop').setOrigin(0, 0);
-                            pop.anims.play('pop');
+                            let pop = this.add.sprite(dot.x - 15, dot.y - 15, 'red').setOrigin(0, 0);
+                            pop.anims.play('red');
                             pop.on('animationcomplete', () => {
                                 pop.destroy();
                             }); 
@@ -271,8 +269,8 @@ class Play extends Phaser.Scene {
                         this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
                         this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
                         if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotYellow'){
-                            let pop = this.add.sprite(dot.x - 15, dot.y - 15, 'pop').setOrigin(0, 0);
-                            pop.anims.play('pop');
+                            let pop = this.add.sprite(dot.x - 15, dot.y - 15, 'yellow').setOrigin(0, 0);
+                            pop.anims.play('yellow');
                             pop.on('animationcomplete', () => {
                                 pop.destroy();
                             }); 
@@ -294,6 +292,7 @@ class Play extends Phaser.Scene {
         });
     }
 
+    // level difficulty increase
     updateLevel(){
         if(!this.player.gameOver){
             this.timeLeft -= 1;

@@ -24,9 +24,11 @@ class Load extends Phaser.Scene{
         this.load.image('button', './assets/button.png');
         this.load.image('blankbutton', './assets/blankbutton.png');
         this.load.bitmapFont('klein', './assets/fonts/KleinText/KleinText.png', './assets/fonts/KleinText/KleinText.xml'); // (Font: Klein Family by Zetafonts -http://www.zetafonts.com/collection/2922)
-        this.load.spritesheet('pop', './assets/pop.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 7});
-
         
+        // anims
+        this.load.spritesheet('redPop', './assets/redPop.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 7});
+        this.load.spritesheet('greenPop', './assets/greenPop.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 7});
+        this.load.spritesheet('yellowPop', './assets/yellowPop.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 7});
 
         // audio
         this.load.audio('bgm', './assets/bgm.mp3'); // Sound Effect from Pixabay
@@ -39,6 +41,22 @@ class Load extends Phaser.Scene{
     }
 
     create(){
+        // anims create
+        this.anims.create({
+            key: 'red',
+            frames: this.anims.generateFrameNumbers('redPop', { start: 0, end: 7, first: 0}),
+            frameRate: 32
+        });
+        this.anims.create({
+            key: 'green',
+            frames: this.anims.generateFrameNumbers('greenPop', { start: 0, end: 7, first: 0}),
+            frameRate: 32
+        });
+        this.anims.create({
+            key: 'yellow',
+            frames: this.anims.generateFrameNumbers('yellowPop', { start: 0, end: 7, first: 0}),
+            frameRate: 32
+        });
         this.scene.start('menuScene');
     }
 }

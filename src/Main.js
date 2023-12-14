@@ -1,5 +1,5 @@
 // Phaser major components used: particle effects, text objects, animation manager, tween manager, and timers
-// Add animation for dot clear, fix instructions/credits scene, add tween for number in score
+// Fix instructions/credits scene, add tween for number in score
 
 "use strict"
 
