@@ -3,6 +3,12 @@ class Play extends Phaser.Scene {
         super("playScene");
     }
     create(){
+        //anims
+        this.anims.create({
+            key: 'pop',
+            frames: this.anims.generateFrameNumbers('pop', { start: 0, end: 7, first: 0}),
+            frameRate: 30
+        });
         // bgm
         this.bgm = this.sound.add('bgm', { 
             mute: false,
@@ -218,6 +224,11 @@ class Play extends Phaser.Scene {
                         this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
                         this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
                         if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotGreen'){
+                            let pop = this.add.sprite(dot.x - 15, dot.y - 15, 'pop').setOrigin(0, 0);
+                            pop.anims.play('pop');
+                            pop.on('animationcomplete', () => {
+                                pop.destroy();
+                            }); 
                             dot.destroy();
                             this.combo++;
                             this.comboText.setText(this.combo);
@@ -236,6 +247,11 @@ class Play extends Phaser.Scene {
                         this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
                         this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
                         if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotRed'){
+                            let pop = this.add.sprite(dot.x - 15, dot.y - 15, 'pop').setOrigin(0, 0);
+                            pop.anims.play('pop');
+                            pop.on('animationcomplete', () => {
+                                pop.destroy();
+                            }); 
                             dot.destroy();
                             this.combo++;
                             this.comboText.setText(this.combo);
@@ -255,6 +271,11 @@ class Play extends Phaser.Scene {
                         this.dotCol = Math.floor((dot.x - this.startX) / this.cellSize);
                         this.dotRow = Math.floor((dot.y - this.startY) / this.cellSize);
                         if(this.dotsArray[this.dotCol][this.dotRow].color == 'dotYellow'){
+                            let pop = this.add.sprite(dot.x - 15, dot.y - 15, 'pop').setOrigin(0, 0);
+                            pop.anims.play('pop');
+                            pop.on('animationcomplete', () => {
+                                pop.destroy();
+                            }); 
                             dot.destroy();
                             this.combo++;
                             this.comboText.setText(this.combo);

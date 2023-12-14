@@ -24,6 +24,7 @@ class Load extends Phaser.Scene{
         this.load.image('button', './assets/button.png');
         this.load.image('blankbutton', './assets/blankbutton.png');
         this.load.bitmapFont('klein', './assets/fonts/KleinText/KleinText.png', './assets/fonts/KleinText/KleinText.xml'); // (Font: Klein Family by Zetafonts -http://www.zetafonts.com/collection/2922)
+        this.load.spritesheet('pop', './assets/pop.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 7});
 
         
 
