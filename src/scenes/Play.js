@@ -59,8 +59,17 @@ class Play extends Phaser.Scene {
 
 
         // call spawnDot continuously to create random dot sprites until the grid is full
+        // first spawn
+        this.MAX_DELAY = 980;
         this.time.addEvent({
-            delay: 980,
+            delay: 1000,
+            callback: this.spawnDot,
+            callbackScope: this,
+            loop: false,
+        });
+
+        this.spawns = this.time.addEvent({
+            delay: 3000,
             callback: this.spawnDot,
             callbackScope: this,
             loop: true,
@@ -138,6 +147,17 @@ class Play extends Phaser.Scene {
         this.add.image(game.config.width/2 - 260, game.config.height/10 + 20, 'blankbutton').setScale(6, 1);
         this.add.image(game.config.width/2, game.config.height/10 + 20, 'blankbutton').setScale(4, 1);
         this.add.image(game.config.width/2 + 260, game.config.height/10 + 20, 'blankbutton').setScale(6, 1);
+        this.add.image(game.config.width/2 - 330, game.config.height - 60, 'dotGreen').setScale(2);
+        this.add.image(game.config.width/2 - 70, game.config.height - 60, 'dotRed').setScale(2);
+        this.add.image(game.config.width/2 + 190, game.config.height - 60, 'dotYellow').setScale(2);
+        this.add.image(game.config.width/2 - 240, game.config.height - 60, 'blankbutton');
+        this.add.image(game.config.width/2 + 20, game.config.height - 60, 'blankbutton');
+        this.add.image(game.config.width/2 + 270, game.config.height - 60, 'blankbutton');
+        this.add.image(game.config.width/2 + 360, game.config.height - 60, 'blankbutton');
+        this.add.bitmapText(game.config.width/2 - 253, game.config.height - 80, 'klein', 'A').setScale(0.5);
+        this.add.bitmapText(game.config.width/2 + 7, game.config.height - 80, 'klein', 'D').setScale(0.5);
+        this.add.bitmapText(game.config.width/2 + 257, game.config.height - 80, 'klein', 'A  +').setScale(0.5);
+        this.add.bitmapText(game.config.width/2 + 347, game.config.height - 80, 'klein', 'D').setScale(0.5);
         this.add.bitmapText(game.config.width/2 - 380, game.config.height/10, 'klein', 'Score:').setScale(0.5);
         this.add.bitmapText(game.config.width/2 - 70, game.config.height/10, 'klein', 'Time:').setScale(0.5);
         this.add.bitmapText(game.config.width/2 + 140, game.config.height/10, 'klein', 'Combo:').setScale(0.5);
@@ -167,10 +187,13 @@ class Play extends Phaser.Scene {
             });
             this.time.delayedCall(2000, () => {
                 this.dotEmitter.stop();
-                this.add.image(game.config.width/2, game.config.height/2, 'blankbutton').setScale(5);
-                this.add.bitmapText(game.config.width/3, game.config.height/3, 'klein', "Game Over").setScale(0.5);
-                this.add.bitmapText(game.config.width/3, game.config.height/3 + 50, 'klein', 'Best Score: ');
-                this.highScoreText = this.add.text(game.config.width/3 + 100, game.config.height/3 + 50, highScoreVal);
+                this.add.image(game.config.width/2, game.config.height/2, 'blankbutton').setScale(15,3);
+                this.add.bitmapText(game.config.width/2 - 85, game.config.height/2 - 72, 'klein', "Game Over").setScale(0.4);
+                this.add.bitmapText(game.config.width/2 - 100, game.config.height/2 - 40, 'klein', 'Best Score: ').setScale(0.4);
+                this.add.bitmapText(game.config.width/2 - 115, game.config.height/2 - 10, 'klein', 'Press R to restart').setScale(0.4);
+                this.add.image(game.config.width/2 - 95, game.config.height/2 + 35, 'button').setScale(0.6).setAngle(180);
+                this.add.bitmapText(game.config.width/2 - 190, game.config.height/2 + 20, 'klein', 'Press     to go back to menu').setScale(0.4);
+                this.highScoreText = this.add.text(game.config.width/3 + 200, game.config.height/3 + 62, highScoreVal).setColor('black').setScale(2);
             }, [], this);
         }
         if(this.player.gameOver && Phaser.Input.Keyboard.JustDown(keyR)){
@@ -300,12 +323,11 @@ class Play extends Phaser.Scene {
             if(highScoreVal <= this.currScore){
                 highScoreVal = this.currScore;
             }
-            // if((this.elapsedTime % 5) == 0){
-            //     if(this.crystalSpeed >= this.crystalSpeedMax){
-            //         this.crystalSpeed -= 25;
-            //         this.spikeSpeed -= 5;
-            //     }
-            // }
+            if((this.timeLeft % 5) == 0){
+                if(this.spawns.delay > this.MAX_DELAY){
+                    this.spawns.delay -= 400;
+                }
+            }
         }
     }
 }
